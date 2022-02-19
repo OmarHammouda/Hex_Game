@@ -1,10 +1,9 @@
 #include "board.h"
+#include "engine.h"
 
 int main() {
 
-    Board b(5);
-
-    cout << b;
+    HexGame();
 
     return 0;
 }

@@ -8,18 +8,18 @@
 using namespace std;
 
 enum class NodeColor { Empty, Red, Blue };
-enum class NodeType { TopLeft, TopCenter, TopRight, SideLeft, Center, SideRight, BottomLeft, BottomCenter, BottomRight };
+enum class NodePosition { TopLeft, TopCenter, TopRight, SideLeft, Center, SideRight, BottomLeft, BottomCenter, BottomRight };
 
 class Node {
 public:
     // Constructor
-    Node(NodeType t, NodeColor c) : type(t), color(c) { }
+    Node(NodePosition p, NodeColor c) : position(p), color(c) { }
 
     // Destructor
     ~Node() {}
 
-    // Get the Node type
-    NodeType GetNodeType() const { return type; }
+    // Get the Node position on the board
+    NodePosition GetNodePosition() const { return position; }
 
     // Set the Node color
     void SetNodeColor(NodeColor c) { color = c; }
@@ -30,7 +30,7 @@ public:
     friend ostream& operator<< (ostream& os, const Node& n);
 
 private:
-    NodeType type;
+    NodePosition position;
     NodeColor color;
 };
 
@@ -55,43 +55,43 @@ public:
     Board(int brdSize) : boardSize(brdSize) {
         // Top Row
         // Top Left corner node
-        Node n1(NodeType::TopLeft, NodeColor::Empty);
+        Node n1(NodePosition::TopLeft, NodeColor::Empty);
         myBoard.push_back(n1);
         // Top center nodes
         for (int i = 0; i < boardSize - 2; ++i) {
-            Node n2(NodeType::TopCenter, NodeColor::Empty);
+            Node n2(NodePosition::TopCenter, NodeColor::Empty);
             myBoard.push_back(n2);
         }
         // Top Right corner node
-        Node n3(NodeType::TopRight, NodeColor::Empty);
+        Node n3(NodePosition::TopRight, NodeColor::Empty);
         myBoard.push_back(n3);
 
         // Center Rows
         for (int i = 0; i < boardSize - 2; ++i) {
             // Left Side node
-            Node n4(NodeType::SideLeft, NodeColor::Empty);
+            Node n4(NodePosition::SideLeft, NodeColor::Empty);
             myBoard.push_back(n4);
             // Center nodes
             for (int j = 0; j < boardSize - 2; ++j) {
-                Node n5(NodeType::Center, NodeColor::Empty);
+                Node n5(NodePosition::Center, NodeColor::Empty);
                 myBoard.push_back(n5);
             }
             // Right Side node
-            Node n6(NodeType::SideRight, NodeColor::Empty);
+            Node n6(NodePosition::SideRight, NodeColor::Empty);
             myBoard.push_back(n6);
         }
 
         // Bottom Row
         // Bottom Left corner node
-        Node n7(NodeType::BottomLeft, NodeColor::Empty);
+        Node n7(NodePosition::BottomLeft, NodeColor::Empty);
         myBoard.push_back(n7);
         // Bottom center nodes
         for (int i = 0; i < boardSize - 2; ++i) {
-            Node n8(NodeType::BottomCenter, NodeColor::Empty);
+            Node n8(NodePosition::BottomCenter, NodeColor::Empty);
             myBoard.push_back(n8);
         }
         // Bottom Right corner node
-        Node n9(NodeType::BottomRight, NodeColor::Empty);
+        Node n9(NodePosition::BottomRight, NodeColor::Empty);
         myBoard.push_back(n9);
     }
 
@@ -105,7 +105,6 @@ public:
 private:
     int boardSize;
     vector<Node> myBoard;
-
 };
 
 ostream& operator<< (ostream& os, const Board& b) {
