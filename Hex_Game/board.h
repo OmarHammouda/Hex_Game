@@ -51,6 +51,9 @@ ostream& operator<< (ostream& os, const Node& n) {
 
 class Board {
 public:
+    // Default Constructor
+    Board() {};
+
     // Constructor
     Board(int brdSize) : boardSize(brdSize) {
         // Top Row
