@@ -30,7 +30,7 @@ public:
                     setupBoard();
                     break;
                 case GameMode::PlayGame:
-                    mode = GameMode::ExitGame;
+                    playGame();
                     break;
             }
         }
@@ -116,7 +116,50 @@ private:
                 mode = GameMode::PlayGame;
                 break;
             }
+        }
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
 
+    // Play the game
+    void playGame() {
+        cout << "###################################################################\n"
+                "####################### Starting New Game #########################\n"
+                "###################################################################" << endl << endl;
+
+        if (opponentIsAI) {
+            cout << "AI not implemented yet!" << endl << endl;
+            mode = GameMode::MainMenu;
+        }
+        else {
+            playerVSplayer();
+        }
+    }
+
+    // Player vs Player game
+    void playerVSplayer() {
+        int turnCount = 1;
+        int inputRow, inputCol;
+
+        while (true) {
+            if (turnCount % 2 == 1) {
+                // Player 1's turn
+                cout << "Turn " << turnCount << ". Player 1's turn." << endl << endl;
+                cout << myBoard << endl;
+                cout << "Choose Row Number: ";
+                cin >> inputRow;
+                cout << "Choose Col Number: ";
+                cin >> inputCol;
+            }
+            else {
+                // Player 2's turn
+                cout << "Turn " << turnCount << ". Player 2's turn." << endl << endl;
+                cout << myBoard << endl;
+                cout << "Choose Row Number: ";
+                cin >> inputRow;
+                cout << "Choose Col Number: ";
+                cin >> inputCol;
+            }
         }
     }
 };

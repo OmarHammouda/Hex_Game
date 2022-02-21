@@ -7,13 +7,13 @@
 
 using namespace std;
 
-enum class NodeColor { Empty, Red, Blue };
+enum class NodePlayer { Empty, Player1, Player2 };
 enum class NodePosition { TopLeft, TopCenter, TopRight, SideLeft, Center, SideRight, BottomLeft, BottomCenter, BottomRight };
 
 class Node {
 public:
     // Constructor
-    Node(NodePosition p, NodeColor c) : position(p), color(c) { }
+    Node(NodePosition p) : position(p), player(NodePlayer::Empty) { }
 
     // Destructor
     ~Node() {}
@@ -21,28 +21,28 @@ public:
     // Get the Node position on the board
     NodePosition GetNodePosition() const { return position; }
 
-    // Set the Node color
-    void SetNodeColor(NodeColor c) { color = c; }
+    // Set the Node player
+    void SetNodePlayer(NodePlayer pl) { player = pl; }
 
-    // Get the Node color
-    NodeColor GetNodeColor() const { return color; }
+    // Get the Node player
+    NodePlayer GetNodePlayer() const { return player; }
 
     friend ostream& operator<< (ostream& os, const Node& n);
 
 private:
     NodePosition position;
-    NodeColor color;
+    NodePlayer player;
 };
 
 ostream& operator<< (ostream& os, const Node& n) {
-    switch (n.GetNodeColor()) {
-        case NodeColor::Empty:
+    switch (n.GetNodePlayer()) {
+        case NodePlayer::Empty:
             cout << ".";
             break;
-        case NodeColor::Red:
+        case NodePlayer::Player1:
             cout << "x";
             break;
-        case NodeColor::Blue:
+        case NodePlayer::Player2:
             cout << "o";
             break;
     }
@@ -58,43 +58,43 @@ public:
     Board(int brdSize) : boardSize(brdSize) {
         // Top Row
         // Top Left corner node
-        Node n1(NodePosition::TopLeft, NodeColor::Empty);
+        Node n1(NodePosition::TopLeft);
         myBoard.push_back(n1);
         // Top center nodes
         for (int i = 0; i < boardSize - 2; ++i) {
-            Node n2(NodePosition::TopCenter, NodeColor::Empty);
+            Node n2(NodePosition::TopCenter);
             myBoard.push_back(n2);
         }
         // Top Right corner node
-        Node n3(NodePosition::TopRight, NodeColor::Empty);
+        Node n3(NodePosition::TopRight);
         myBoard.push_back(n3);
 
         // Center Rows
         for (int i = 0; i < boardSize - 2; ++i) {
             // Left Side node
-            Node n4(NodePosition::SideLeft, NodeColor::Empty);
+            Node n4(NodePosition::SideLeft);
             myBoard.push_back(n4);
             // Center nodes
             for (int j = 0; j < boardSize - 2; ++j) {
-                Node n5(NodePosition::Center, NodeColor::Empty);
+                Node n5(NodePosition::Center);
                 myBoard.push_back(n5);
             }
             // Right Side node
-            Node n6(NodePosition::SideRight, NodeColor::Empty);
+            Node n6(NodePosition::SideRight);
             myBoard.push_back(n6);
         }
 
         // Bottom Row
         // Bottom Left corner node
-        Node n7(NodePosition::BottomLeft, NodeColor::Empty);
+        Node n7(NodePosition::BottomLeft);
         myBoard.push_back(n7);
         // Bottom center nodes
         for (int i = 0; i < boardSize - 2; ++i) {
-            Node n8(NodePosition::BottomCenter, NodeColor::Empty);
+            Node n8(NodePosition::BottomCenter);
             myBoard.push_back(n8);
         }
         // Bottom Right corner node
-        Node n9(NodePosition::BottomRight, NodeColor::Empty);
+        Node n9(NodePosition::BottomRight);
         myBoard.push_back(n9);
     }
 
@@ -111,9 +111,16 @@ private:
 };
 
 ostream& operator<< (ostream& os, const Board& b) {
-    string spaces = "";
+    string spaces = "    ";
+
+    cout << spaces << "  ";
     for (int i = 0; i < b.boardSize-1; ++i) {
-        cout << spaces;
+        cout << i << " \\ ";
+    }
+    cout << (b.boardSize - 1) << endl;
+
+    for (int i = 0; i < b.boardSize-1; ++i) {
+        cout << spaces << i << "  ";
 
         for (int j = 0; j < b.boardSize-1; ++j) {
             cout << b.myBoard.at(b.GetIdx(i, j)) << " - ";
@@ -121,7 +128,7 @@ ostream& operator<< (ostream& os, const Board& b) {
         cout << b.myBoard.at(b.GetIdx(i, b.boardSize - 1)) << endl;
 
         spaces += " ";
-        cout << spaces;
+        cout << spaces << "-  ";
 
         for (int j = 0; j < b.boardSize - 1; ++j) {
             cout << "\\ / ";
@@ -131,7 +138,7 @@ ostream& operator<< (ostream& os, const Board& b) {
         spaces += " ";
     }
 
-    cout << spaces;
+    cout << spaces << (b.boardSize - 1) << "  ";
 
     for (int j = 0; j < b.boardSize - 1; ++j) {
         cout << b.myBoard.at(b.GetIdx(b.boardSize - 1, j)) << " - ";
