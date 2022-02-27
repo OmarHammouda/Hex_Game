@@ -98,9 +98,21 @@ public:
         myBoard.push_back(n9);
     }
 
-    // Given the row and columns indices, return the 1D index in the vector
-    int GetIdx(int row, int col) const {
-        return row * boardSize + col;
+    // Check if node is empty
+    bool isNodeEmpty(int row, int col) const {
+        int nodeIdx = GetIdx(row, col);
+        return myBoard.at(nodeIdx).GetNodePlayer() == NodePlayer::Empty;
+    }
+
+    // Set the node's player
+    void SetNodePlayer(int row, int col, int playerID) {
+        int nodeIdx = GetIdx(row, col);
+        myBoard.at(nodeIdx).SetNodePlayer(static_cast<NodePlayer>(playerID));
+    }
+
+    // int get boardSize
+    int GetBoardSize() const {
+        return boardSize;
     }
 
     friend ostream& operator<< (ostream& os, const Board& b);
@@ -108,6 +120,11 @@ public:
 private:
     int boardSize;
     vector<Node> myBoard;
+
+    // Given the row and columns indices, return the 1D index in the vector
+    int GetIdx(int row, int col) const {
+        return row * boardSize + col;
+    }
 };
 
 ostream& operator<< (ostream& os, const Board& b) {

@@ -138,29 +138,92 @@ private:
 
     // Player vs Player game
     void playerVSplayer() {
-        int turnCount = 1;
-        int inputRow, inputCol;
+        int turnCount = 0;
 
         while (true) {
-            if (turnCount % 2 == 1) {
-                // Player 1's turn
-                cout << "Turn " << turnCount << ". Player 1's turn." << endl << endl;
-                cout << myBoard << endl;
-                cout << "Choose Row Number: ";
-                cin >> inputRow;
-                cout << "Choose Col Number: ";
-                cin >> inputCol;
-            }
-            else {
-                // Player 2's turn
-                cout << "Turn " << turnCount << ". Player 2's turn." << endl << endl;
-                cout << myBoard << endl;
-                cout << "Choose Row Number: ";
-                cin >> inputRow;
-                cout << "Choose Col Number: ";
-                cin >> inputCol;
+            getPlayerInputCoords((turnCount % 2) + 1, turnCount);
+            if (mode != GameMode::PlayGame) {
+                break;
             }
         }
+    }
+
+    // Get Coordinates from Player
+    void getPlayerInputCoords(int playerID, int& turnCount) {
+        int inputRow, inputCol;
+
+        turnCount++;
+
+        // Print turn number, and who's turn it is, then print the board
+        cout << endl;
+        cout << "Turn " << turnCount << ". Player " << playerID << "'s turn." << endl << endl;
+        cout << myBoard << endl;
+
+        // Ask the player to choose a row and column numbers. Then check whether the input is valid.
+        bool exitLoop;
+        // First, choose row
+        while (true) {
+            cout << "Choose Row Number: ";
+            cin >> inputRow;
+            exitLoop = checkPlayerInput(cin.fail(), inputRow, "Row");
+            if (exitLoop) {
+                break;
+            }
+        }
+        // If player chose to go back to main menu or exit the game, no need to continue
+        if (mode != GameMode::PlayGame) {
+            return;
+        }
+        // Second, choose col
+        while (true) {
+            cout << "Choose Column Number: ";
+            cin >> inputCol;
+            exitLoop = checkPlayerInput(cin.fail(), inputCol, "Column");
+            if (exitLoop) {
+                break;
+            }
+        }
+        // If player chose to go back to main menu or exit the game, no need to continue
+        if (mode != GameMode::PlayGame) {
+            return;
+        }
+        // Check if the at the entered position, the board is empty, if yes, set the node at that location
+        if (myBoard.isNodeEmpty(inputRow, inputCol)) {
+            myBoard.SetNodePlayer(inputRow, inputCol, playerID);
+        }
+        else {
+            turnCount--;
+            cout << "The node at the entered coordinates is already occupied. Please choose other coordinates." << endl;
+        }
+    }
+
+    bool checkPlayerInput(bool cinFailed, int playerInput, string dimension) {
+        char input;
+        if (cinFailed || (playerInput < 0) || (playerInput > myBoard.GetBoardSize()-1) ) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+
+            cout << endl;
+            cout << "Wrong Input! " << dimension << " number should be an integer from 0 to " << (myBoard.GetBoardSize() - 1) << endl;
+            cout << "Press (B) to go back to main menu, (Q) to quit the game entirely or any other key to re-enter the " << dimension << " number." << endl;
+
+            cin >> input;
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << endl;
+            if (toupper(input) == 'B') {
+                mode = GameMode::MainMenu;
+                return true;
+            }
+            else if (toupper(input) == 'Q') {
+                mode = GameMode::ExitGame;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
     }
 };
 
