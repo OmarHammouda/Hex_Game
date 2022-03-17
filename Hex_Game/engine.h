@@ -6,7 +6,7 @@
 #include <string>
 #include "board.h"
 
-enum class GameMode { ExitGame, MainMenu, SetupBoard, PlayGame };
+enum class GameMode { ExitGame, MainMenu, SetupBoard, PlayGame, GameWon };
 
 class HexGame {
 public:
@@ -32,6 +32,9 @@ public:
                 case GameMode::PlayGame:
                     playGame();
                     break;
+                case GameMode::GameWon:
+                    gameWon();
+                    break;
             }
         }
 
@@ -43,6 +46,7 @@ private:
     GameMode mode;
     bool opponentIsAI;
     Board myBoard;
+    NodePlayer currentPlayer;
 
     // Check the Game Mode
 
@@ -111,8 +115,7 @@ private:
                 }
             }
             else {
-                Board b(userInput);
-                myBoard = b;
+                myBoard.SetupBoard(userInput);
                 mode = GameMode::PlayGame;
                 break;
             }
@@ -132,6 +135,8 @@ private:
             mode = GameMode::MainMenu;
         }
         else {
+            cout << "Rules: Player 1 wins if they connect the left and right sides\n"
+                    "       Player 2 wins if they connect the top and bottom side" << endl << endl;
             playerVSplayer();
         }
     }
@@ -139,9 +144,11 @@ private:
     // Player vs Player game
     void playerVSplayer() {
         int turnCount = 0;
-
+        int playerID;
         while (true) {
-            getPlayerInputCoords((turnCount % 2) + 1, turnCount);
+            playerID = (turnCount % 2) + 1;
+            currentPlayer = static_cast<NodePlayer>(playerID);
+            PlayCurrentTurn(playerID, turnCount);
             if (mode != GameMode::PlayGame) {
                 break;
             }
@@ -149,7 +156,7 @@ private:
     }
 
     // Get Coordinates from Player
-    void getPlayerInputCoords(int playerID, int& turnCount) {
+    void PlayCurrentTurn(int playerID, int& turnCount) {
         int inputRow, inputCol;
 
         turnCount++;
@@ -166,6 +173,8 @@ private:
             cout << "Choose Row Number: ";
             cin >> inputRow;
             exitLoop = checkPlayerInput(cin.fail(), inputRow, "Row");
+            cin.clear();
+            cin.ignore(10000, '\n');
             if (exitLoop) {
                 break;
             }
@@ -179,6 +188,8 @@ private:
             cout << "Choose Column Number: ";
             cin >> inputCol;
             exitLoop = checkPlayerInput(cin.fail(), inputCol, "Column");
+            cin.clear();
+            cin.ignore(10000, '\n');
             if (exitLoop) {
                 break;
             }
@@ -189,11 +200,13 @@ private:
         }
         // Check if the at the entered position, the board is empty, if yes, set the node at that location
         if (myBoard.isNodeEmpty(inputRow, inputCol)) {
-            myBoard.SetNodePlayer(inputRow, inputCol, playerID);
+            if (myBoard.ModifyBoardAfterTurn(inputRow, inputCol, playerID)) {
+                mode = GameMode::GameWon;
+            }
         }
         else {
             turnCount--;
-            cout << "The node at the entered coordinates is already occupied. Please choose other coordinates." << endl;
+            cout << "\nThe node at the entered coordinates is already occupied. Please choose other coordinates." << endl;
         }
     }
 
@@ -224,6 +237,17 @@ private:
             }
         }
         return true;
+    }
+
+    void gameWon() {
+        cout << endl;
+        cout << myBoard << endl;
+        cout << "###################################################################\n" <<
+            "######################### " << currentPlayer << " WON! ###########################\n" <<
+            "###################################################################" << endl << endl;
+        mode = GameMode::MainMenu;
+        // Clear the current board
+        myBoard.ClearBoard();
     }
 };
 
